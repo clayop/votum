@@ -22,7 +22,8 @@ if __name__ == '__main__':
                     pending_votes[block][postid][voter] = weight
                 break
 
-    ws = create_connection("ws://127.0.0.1:8090")
+    wsnode = "wss://node.steem.ws"    # ws://127.0.0.1:8090
+    ws = create_connection(wsnode)
     with open("votum_config.yml", "r") as config_file:
         config = yaml.load(config_file)
         account_info = config["account_info"]
@@ -114,7 +115,7 @@ if __name__ == '__main__':
                                         pass
                                 else:
                                     try:
-                                        Steem(wif=account_info[v]).vote(postid, weight, v)
+                                        Steem(wif=account_info[v], node=wsnode).vote(postid, weight, v)
                                         print(postid, weight, v)
                                         complete_votes[postid] = {v:last_block}
                                     except Exception as e:
