@@ -1,0 +1,3 @@
+last_block: 0                   # Last block to start with. If you want to start from the most recent block, leave it 0
+pending:                        # Pending posts to vote
+complete:                       # Completed posts voted already
