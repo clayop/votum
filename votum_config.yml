@@ -1,0 +1,33 @@
+last_block: 0                   # Last block to start with. If you want to start from the most recent block, leave it 0
+account_info:
+  "youraccount": "5_YOUR_POSTING_PRIVATE_KEY"
+#  "youraccount2" : "5_YOUR_POSTING_PRIVATE_KEY2"
+
+voting_rule:
+  mirror:                       # Mirring other curating accounts
+    "targetaccount1":           # Curation account to mirror
+      "youraccount":            # Your account
+        weight: 100             # 0 - 100
+        delay: 0                # Second
+        only_positive: True     # If true, ignore downvoting
+#    "targetaccount2":
+#      "youraccount2":
+#        weight: 100
+#        delay: 0
+#        only_positive: False
+  follow:                       # Upvoting posts by certain authors
+    "targetaccount":            # Author accounts to upvote
+      "youraccount":
+        weight: 100
+        delay: 0
+  tag:                          # Upvoting posts in certain tags (for community support)
+    "targettag":
+      "youraccount":
+        weight: 100
+        delay: 0
+        reputation: 60          # Minimum reputation to be upvoted
+  reputation:                   # Upvoting authors with certain levels of reputation
+    67:                         # Reputation to be upvoted e.g. If author's reputation is 67, you will upvote him/her
+      "youraccount":
+        weight: 100
+        delay: 0
