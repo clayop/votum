@@ -15,8 +15,11 @@ if __name__ == '__main__':
             if postid in pending_votes[block]:
                 block += 1
             else:
-                pending_votes[block][postid] = {}
-                pending_votes[block][postid][voter] = weight
+                if voter in pending_votes[block][postid]:
+                    break
+                else:
+                    pending_votes[block][postid] = {}
+                    pending_votes[block][postid][voter] = weight
                 break
 
     ws = create_connection("ws://127.0.0.1:8090")
