@@ -33,6 +33,9 @@ if __name__ == '__main__':
         log = yaml.load(log_file)
         pending_votes = log["pending"]
         complete_votes = log["complete"]
+    if last_block == 0:
+        send = ws.send(json.dumps({"jsonrpc": "2.0", "id": 0, "method": "call", "params": [0, "get_dynamic_global_properties", []]}))
+        last_block = json.loads(ws.recv())["result"]["head_block_number"]
     while True:
         send = ws.send(json.dumps({"jsonrpc": "2.0", "id": 0, "method": "call", "params": [0, "get_block", [last_block]]}))
         res = json.loads(ws.recv())
