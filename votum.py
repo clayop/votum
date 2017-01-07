@@ -31,15 +31,17 @@ if __name__ == '__main__':
         rule_follow = voting_rule["follow"]
         rule_tag = voting_rule["tag"]
         rule_reputation = voting_rule["reputation"]
+        for i in [rule_mirror, rule_follow, rule_tag, rule_reputation]:
+            if i is None:
+                i = {}
     with open("votum_log.yml", "r") as log_file:
         log = yaml.load(log_file)
         last_block = log["last_block"]
         pending_votes = log["pending"]
         complete_votes = log["complete"]
-        if pending_votes is None:
-            pending_votes = {}
-        if complete_votes is None:
-            complete_votes = {}
+        for i in [pending_votes, complete_votes]:
+            if i is None:
+                i = {}
     if last_block == 0:
         send = ws.send(json.dumps({"jsonrpc": "2.0", "id": 0, "method": "call", "params": [0, "get_dynamic_global_properties", []]}))
         last_block = json.loads(ws.recv())["result"]["head_block_number"]
@@ -103,7 +105,7 @@ if __name__ == '__main__':
                                         vote_reserve(vote_block, v, postid, weight)
             if pending_votes is not None:
                 for i in sorted(pending_votes):
-                    if i >= last_block:
+                    if i <= last_block:
                         for postid in pending_votes[i]:
                             for v in pending_votes[i][postid]:
                                 weight = pending_votes[i][postid][v]
@@ -114,7 +116,7 @@ if __name__ == '__main__':
                                     try:
                                         Steem(wif=account_info[v]).vote(postid, weight, v)
                                         print(postid, weight, v)
-                                        complete_votes[postid][v] = last_block
+                                        complete_votes[postid] = {v:last_block}
                                     except Exception as e:
                                         print(str(e))
                         pending_votes.pop(i, None)
