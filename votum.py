@@ -22,7 +22,6 @@ if __name__ == '__main__':
     ws = create_connection("ws://127.0.0.1:8090")
     with open("votum_config.yml", "r") as config_file:
         config = yaml.load(config_file)
-        last_block = config["last_block"]
         account_info = config["account_info"]
         voting_rule = config["voting_rule"]
         rule_mirror = voting_rule["mirror"]
@@ -31,6 +30,7 @@ if __name__ == '__main__':
         rule_reputation = voting_rule["reputation"]
     with open("votum_log.yml", "r") as log_file:
         log = yaml.load(log_file)
+        last_block = log["last_block"]
         pending_votes = log["pending"]
         complete_votes = log["complete"]
     if last_block == 0:
