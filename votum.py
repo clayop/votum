@@ -15,10 +15,10 @@ if __name__ == '__main__':
             if postid in pending_votes[block]:
                 block += 1
             else:
+                pending_votes[block][postid] = {}
                 if voter in pending_votes[block][postid]:
                     break
                 else:
-                    pending_votes[block][postid] = {}
                     pending_votes[block][postid][voter] = weight
                 break
 
@@ -36,6 +36,10 @@ if __name__ == '__main__':
         last_block = log["last_block"]
         pending_votes = log["pending"]
         complete_votes = log["complete"]
+        if pending_votes is None:
+            pending_votes = {}
+        if complete_votes is None:
+            complete_votes = {}
     if last_block == 0:
         send = ws.send(json.dumps({"jsonrpc": "2.0", "id": 0, "method": "call", "params": [0, "get_dynamic_global_properties", []]}))
         last_block = json.loads(ws.recv())["result"]["head_block_number"]
@@ -117,9 +121,7 @@ if __name__ == '__main__':
                     else:
                         break
             print(str(last_block) + "  " + res["result"]["timestamp"] + "\r", end="")
-            config["last_block"] = last_block
-            with open("votum_config.yml", "w") as config_file:
-                yaml.dump(config, config_file, default_flow_style=False)
+            log["last_block"] = last_block
             log["pending"] = pending_votes
             log["complete"] = complete_votes
             with open("votum_log.yml", "w") as log_file:
