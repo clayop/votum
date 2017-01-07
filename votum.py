@@ -117,7 +117,7 @@ if __name__ == '__main__':
                                     try:
                                         Steem(wif=account_info[v], node=wsnode).vote(postid, weight, v)
                                         print(postid, weight, v)
-                                        complete_votes[postid] = {v:last_block}
+                                        complete_votes[postid] = {v:weight}
                                     except Exception as e:
                                         print(str(e))
                         pending_votes.pop(i, None)
