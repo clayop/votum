@@ -1,5 +1,7 @@
 account_info:
-  "youraccount": "5_YOUR_POSTING_PRIVATE_KEY"
+  "youraccount":
+    posting_key: "5_YOUR_POSTING_PRIVATE_KEY"
+    voting_power: 0             # 0-100. If acccount's voting power percentage is lower than this, voting is postponed.
 #  "youraccount2" : "5_YOUR_POSTING_PRIVATE_KEY2"
 
 voting_rule:
