@@ -115,27 +115,28 @@ if __name__ == '__main__':
             for i in sorted(pending_votes):
                 if i <= last_block:
                     for v in pending_votes[i]:
-                        send = ws.send(json.dumps({"jsonrpc": "2.0", "id": 0, "method": "get_accounts", "params": [[v]]}))
-                        current_voting_power = float(json.loads(ws.recv())["result"][0]["voting_power"])/100
-                        if current_voting_power < account_info[v]["voting_power"]:
-                            while True:
-                                j = i+1
-                                if j not in pending_votes:
-                                    pending_votes[j] = {}
-                                if v not in pending_votes[j]:
-                                    pending_votes[j][v] = {postid:weight}
-                                    break
-                        else:
+                        for postid in pending_votes[i][v]:
                             weight = pending_votes[i][v][postid]
-                            if v not in complete_votes:
-                                complete_votes[v] = {}
-                            if postid not in complete_votes[v]:
-                                try:
-                                    Steem(wif=account_info[v]["posting_key"], node=wsnode).vote(postid, weight, v)
-                                    print(postid, weight, v)
-                                    complete_votes[v] = {postid:weight}
-                                except:
-                                    pass
+                            send = ws.send(json.dumps({"jsonrpc": "2.0", "id": 0, "method": "get_accounts", "params": [[v]]}))
+                            current_voting_power = float(json.loads(ws.recv())["result"][0]["voting_power"])/100
+                            if current_voting_power < account_info[v]["voting_power"]:
+                                while True:
+                                    j = i+1
+                                    if j not in pending_votes:
+                                        pending_votes[j] = {}
+                                    if v not in pending_votes[j]:
+                                        pending_votes[j][v] = {postid:weight}
+                                        break
+                            else:
+                                if v not in complete_votes:
+                                    complete_votes[v] = {}
+                                if postid not in complete_votes[v]:
+                                    try:
+                                        Steem(wif=account_info[v]["posting_key"], node=wsnode).vote(postid, weight, v)
+                                        print(postid, weight, v)
+                                        complete_votes[v] = {postid:weight}
+                                    except:
+                                        pass
                     pending_votes.pop(i, None)
                 else:
                     break
