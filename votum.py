@@ -24,21 +24,14 @@ if __name__ == '__main__':
         config = yaml.load(config_file)
         account_info = config["account_info"]
         voting_rule = config["voting_rule"]
-        if voting_rule["mirror"] is None:
-            rule_mirror = {}
-        else:
+        (rule_mirror, rule_follow, rule_tag, rule_reputation) = ({}, {}, {}, {})
+        if voting_rule["mirror"] is not None:
             rule_mirror = voting_rule["mirror"]
-        if voting_rule["follow"] is None:
-            rule_follow = {}
-        else:
+        if voting_rule["follow"] is not None:
             rule_follow = voting_rule["follow"]
-        if voting_rule["tag"] is None:
-            rule_tag = {}
-        else:
+        if voting_rule["tag"] is not None:
             rule_tag = voting_rule["tag"]
-        if voting_rule["reputation"] is None:
-            rule_reputation = {}
-        else:
+        if voting_rule["reputation"] is not None:
             rule_reputation = voting_rule["reputation"]
     with open("votum_log.yml", "r") as log_file:
         log = yaml.load(log_file)
@@ -120,13 +113,18 @@ if __name__ == '__main__':
                             send = ws.send(json.dumps({"jsonrpc": "2.0", "id": 0, "method": "get_accounts", "params": [[v]]}))
                             current_voting_power = float(json.loads(ws.recv())["result"][0]["voting_power"])/100
                             if current_voting_power < account_info[v]["voting_power"]:
+                                new_i = i+20
                                 while True:
-                                    j = i+1
-                                    if j not in pending_votes:
-                                        pending_votes[j] = {}
-                                    if v not in pending_votes[j]:
-                                        pending_votes[j][v] = {postid:weight}
+                                    if new_i not in pending_votes:
+                                        pending_votes[new_i] = {}
+                                        pending_votes[new_i][v] = {postid:weight}
                                         break
+                                    else:
+                                        if v not in pending_votes[new_i]:
+                                            pending_votes[new_i][v] = {postid:weight}
+                                            break
+                                        else:
+                                            new_i += 20
                             else:
                                 if v not in complete_votes:
                                     complete_votes[v] = {}
@@ -148,8 +146,12 @@ if __name__ == '__main__':
                 yaml.dump(log, log_file, default_flow_style=False)
             last_block += 1
         else:
-            with open("votum_log.yml", "r") as log_file:
-                log = yaml.load(log_file)
-                pending_votes = log["pending"]
-                complete_votes = log["complete"]
+            with open("votum_config.yml", "r") as config_file:
+                config = yaml.load(config_file)
+                account_info = config["account_info"]
+                voting_rule = config["voting_rule"]
+                rule_mirror = voting_rule["mirror"]
+                rule_follow = voting_rule["follow"]
+                rule_tag = voting_rule["tag"]
+                rule_reputation = voting_rule["reputation"]
             time.sleep(time.time()%3)
